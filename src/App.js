@@ -1,6 +1,6 @@
 import { Suspense, useEffect,  useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { ContactShadows, Environment, useGLTF, OrbitControls } from '@react-three/drei'
 import { proxy, useSnapshot } from "valtio"
 import { HexColorPicker } from "react-colorful"
 
@@ -72,10 +72,12 @@ function App() {
     <>
       <Picker />
       <Canvas>
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={0.3} />
+        <spotLight intensity={0.3} angle={0.1} penumbra={1} position={[5, 25, 20]} />
         <Suspense fallback={null}>
           <Shoe />
         </Suspense>
+        <OrbitControls />
       </Canvas>
     </>
   );
