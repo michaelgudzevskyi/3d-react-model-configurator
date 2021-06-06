@@ -2,6 +2,7 @@ import { Suspense, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import { proxy, useSnapshot } from "valtio"
+import { HexColorPicker } from "react-colorful"
 
 // Using a Valtio state model to bridge reactivity between
 // the canvas and the dom, both can write to it and/or react to it.
