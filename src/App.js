@@ -1,4 +1,4 @@
-import { Suspense, useRef } from 'react'
+import { Suspense, useRef, useState } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import { proxy, useSnapshot } from "valtio"
@@ -20,12 +20,20 @@ const state = proxy({
 })
 
 function Shoe(props) {
+  const [hovered, setHovered] = useState(null)
   const group = useRef() 
   const snap = useSnapshot(state)
   const { nodes, materials } = useGLTF("shoe-draco.glb")
   
   return (
-    <group ref={group} {...props} dispose={null}>
+    <group 
+      ref={group}
+      dispose={null}
+      onPointerOver={(e) => (e.stopPropagation(), setHovered(e.object.material.name))}
+      onPointerOut={(e) => e.intersections.length === 0 && setHovered(null)}
+      onPointerMissed={() => (state.current = null)}
+      onPointerDown={(e) => (e.stopPropagation(), (state.current = e.object.material.name))}
+    >
       <mesh material-color={snap.items.laces} material={materials.laces} geometry={nodes.shoe.geometry} />
       <mesh material-color={snap.items.mesh} material={materials.mesh} geometry={nodes.shoe_1.geometry} />
       <mesh material-color={snap.items.caps} material={materials.caps} geometry={nodes.shoe_2.geometry} />
@@ -38,14 +46,24 @@ function Shoe(props) {
   );
 }
 
+function Picker() {
+  const snap = useSnapshot(state)
+  return (
+    <div className="picker">{snap.current}</div>
+  )
+}
+
 function App() {
   return (
-    <Canvas>
-      <ambientLight intensity={0.5} />
-      <Suspense fallback={null}>
-        <Shoe />
-      </Suspense>
-    </Canvas>
+    <>
+      <Picker />
+      <Canvas>
+        <ambientLight intensity={0.5} />
+        <Suspense fallback={null}>
+          <Shoe />
+        </Suspense>
+      </Canvas>
+    </>
   );
 }
 
